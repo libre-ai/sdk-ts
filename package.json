@@ -55,7 +55,7 @@
     "ajv-formats": "3.0.1"
   },
   "devDependencies": {
-    "@libre-ai/governance": "github:libre-ai/governance#2531f6a16c780bb74ac20541588c80e1386f0e62",
+    "@libre-ai/governance": "github:libre-ai/governance#9511c4087f284d0242fc4a202b2f1452228c16c3",
     "@libre-ai/contracts-authority": "github:libre-ai/contracts#64092261884df4ef2fb0220c36227c4bad05956e",
     "@biomejs/biome": "2.5.3",
     "@types/bun": "1.3.14",
