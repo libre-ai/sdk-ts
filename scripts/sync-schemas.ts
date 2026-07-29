@@ -74,8 +74,11 @@ export async function syncSchemaDirectories(
 
 if (import.meta.main) {
   const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-  const repositoryRoot = resolve(packageRoot, "../..");
-  const sourceDirectory = resolve(repositoryRoot, "contracts/schemas");
+  // Canonical source: the contracts authority at its pinned git-dep revision.
+  const sourceDirectory = resolve(
+    packageRoot,
+    "node_modules/@libre-ai/contracts-authority/contracts/schemas",
+  );
   const vendoredDirectory = resolve(packageRoot, "schemas");
 
   if (process.argv.includes("--check")) {

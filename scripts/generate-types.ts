@@ -22,8 +22,13 @@ interface JsonSchema {
 }
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const repositoryRoot = resolve(packageRoot, "../..");
-const schemaRoot = resolve(repositoryRoot, "contracts/schemas");
+// The canonical source is the contracts AUTHORITY at a pinned revision,
+// consumed as a GitHub git-dep (I-05: the vendored copy under schemas/ is a
+// verified projection; the pin lives in package.json + bun.lock).
+const schemaRoot = resolve(
+  packageRoot,
+  "node_modules/@libre-ai/contracts-authority/contracts/schemas",
+);
 const generatedRoot = resolve(packageRoot, "src/generated");
 const checkOnly = process.argv.includes("--check");
 const banner = `/**
@@ -183,17 +188,17 @@ function renderType(
 }
 
 async function format(directory: string): Promise<void> {
-  const biome = resolve(repositoryRoot, "node_modules/.bin/biome");
+  const biome = resolve(packageRoot, "node_modules/.bin/biome");
   const result = Bun.spawnSync({
     cmd: [
       biome,
       "format",
       "--write",
       "--config-path",
-      resolve(repositoryRoot, "biome.json"),
+      resolve(packageRoot, "biome.json"),
       directory,
     ],
-    cwd: repositoryRoot,
+    cwd: packageRoot,
     stdout: "pipe",
     stderr: "pipe",
   });

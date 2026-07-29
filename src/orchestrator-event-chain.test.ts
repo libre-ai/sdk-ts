@@ -25,7 +25,7 @@ type VectorDocument = {
 
 const vectors = (await Bun.file(
   new URL(
-    "../../../contracts/fixtures/agent-orchestration-v1/event-chain-vectors.v1.json",
+    "../node_modules/@libre-ai/contracts-authority/contracts/fixtures/agent-orchestration-v1/event-chain-vectors.v1.json",
     import.meta.url,
   ),
 ).json()) as VectorDocument;

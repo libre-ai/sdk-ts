@@ -93,15 +93,6 @@ export class JsonSchemaContractRegistry {
 }
 
 /**
- * Root of the monorepo checkout. Only meaningful when this package runs from
- * its workspace location — in a published tarball it points inside
- * `node_modules` and must not be used to locate repository files.
- */
-export function canonicalRepositoryRoot(): string {
-  return resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
-}
-
-/**
  * The schema set shipped WITH the package (`schemas/`, vendored byte-exact
  * from `contracts/schemas` by `scripts/sync-schemas.ts` and gated in CI). A
  * published tarball has no repository around it, so the default load path

@@ -40,7 +40,9 @@ function mutate(input: JsonRecord, mutation: Mutation): JsonRecord {
 }
 
 const registry = await loadCanonicalContractRegistry();
-const fixtureDocument = (await Bun.file("contracts/fixtures/schema-fixtures.v1.json").json()) as {
+const fixtureDocument = (await Bun.file(
+  "node_modules/@libre-ai/contracts-authority/contracts/fixtures/schema-fixtures.v1.json",
+).json()) as {
   cases: Fixture[];
 };
 
