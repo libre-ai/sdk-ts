@@ -52,3 +52,19 @@ stays an owner-gated external action; see
 `docs/transformation/WAVE1-PUBLICATION-RUNBOOK.md`). **Bun-first package:** it
 ships TypeScript source (no dist build) — consumers need a TS-aware toolchain
 (bun natively; vite/esbuild-based bundlers otherwise).
+
+## État du projet
+
+<!-- libre-ai:project-status:begin -->
+<!-- Section générée depuis project.v1.yaml — ne pas éditer à la main. -->
+
+- Situation actuelle : Née verte en γ 3.4 (ex packages/contracts du hub) ; consommée épinglée par les briques et gabarits qui la déclarent.
+- Maturité : usable
+- Exposition : usable-verifiable
+- Confiance : medium
+- Preuves vérifiées le : 2026-07-30
+- Avancement : 50 % du périmètre actuellement déclaré
+
+<!-- libre-ai:project-status:end -->
+
+La fiche [`project.v1.yaml`](./project.v1.yaml) est l'autorité de l'état du projet ; cette section en est générée et le gate de flotte échoue si elles divergent.
