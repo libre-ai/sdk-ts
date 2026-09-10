@@ -40,6 +40,18 @@ function mutate(input: JsonRecord, mutation: Mutation): JsonRecord {
 }
 
 const registry = await loadCanonicalContractRegistry();
+const authorizedExecutionSchemaNames = [
+  "effect-attestation.v1.schema.json",
+  "execution-authorization.v2.schema.json",
+  "execution-graph.v1.schema.json",
+  "execution-plan-body.v2.schema.json",
+  "execution-transfer.v1.schema.json",
+  "human-decision-request.v1.schema.json",
+  "human-decision-response.v1.schema.json",
+  "orchestrator-event.v3.schema.json",
+  "retention-policy.v2.schema.json",
+  "step-invocation.v1.schema.json",
+] as const;
 const fixtureDocument = (await Bun.file(
   "node_modules/@libre-ai/contracts-authority/contracts/fixtures/schema-fixtures.v1.json",
 ).json()) as {
@@ -47,6 +59,20 @@ const fixtureDocument = (await Bun.file(
 };
 
 describe("canonical contract registry", () => {
+  test("includes every authorized execution candidate schema", () => {
+    expect(registry.schemaNames()).toEqual(expect.arrayContaining(authorizedExecutionSchemaNames));
+  });
+
+  test("validates the authorized execution retention v2 authority data", async () => {
+    const retention = await Bun.file(
+      "node_modules/@libre-ai/contracts-authority/contracts/data/retention.v2.json",
+    ).json();
+    expect(registry.validate("retention-policy.v2.schema.json", retention)).toEqual({
+      ok: true,
+      value: retention,
+    });
+  });
+
   test("compiles every canonical JSON Schema without network retrieval", () => {
     expect(registry.schemaNames()).toHaveLength(fixtureDocument.cases.length + 1);
     expect(registry.schemaNames()).toContain("common.v1.schema.json");
