@@ -8,6 +8,11 @@ import {
 type JsonRecord = Record<string, unknown>;
 type Mutation = { name: string; path: string; value?: unknown; remove?: boolean };
 type Fixture = { schema: string; valid: JsonRecord; invalidMutations: Mutation[] };
+interface CatalogEntry {
+  id: string;
+  status: "candidate" | "locked";
+  review?: unknown;
+}
 
 function isRecord(value: unknown): value is JsonRecord {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -52,15 +57,56 @@ const authorizedExecutionSchemaNames = [
   "retention-policy.v2.schema.json",
   "step-invocation.v1.schema.json",
 ] as const;
+const authorizedExecutionIds = [
+  "effect-attestation-v1",
+  "execution-authorization-v2",
+  "execution-graph-v1",
+  "execution-plan-body-v2",
+  "execution-transfer-v1",
+  "human-decision-request-v1",
+  "human-decision-response-v1",
+  "orchestrator-event-v3",
+  "retention-policy-schema-v2",
+  "retention-policy-v2",
+  "step-invocation-v1",
+] as const;
+const remainingCandidateIds = [
+  "boussole-method-v3",
+  "harness-profile-v2",
+  "local-comparison-v3",
+  "public-vote-dataset-v3",
+] as const;
 const fixtureDocument = (await Bun.file(
   "node_modules/@libre-ai/contracts-authority/contracts/fixtures/schema-fixtures.v1.json",
 ).json()) as {
   cases: Fixture[];
 };
+const authorityCatalog = (await Bun.file(
+  "node_modules/@libre-ai/contracts-authority/contracts/catalog.v1.json",
+).json()) as { contracts: CatalogEntry[] };
 
 describe("canonical contract registry", () => {
-  test("includes every authorized execution candidate schema", () => {
+  test("includes every locked authorized execution schema", () => {
     expect(registry.schemaNames()).toEqual(expect.arrayContaining(authorizedExecutionSchemaNames));
+  });
+
+  test("consumes the exact authorized execution Specification Lock", () => {
+    const entriesById = new Map(authorityCatalog.contracts.map((entry) => [entry.id, entry]));
+    for (const id of authorizedExecutionIds) {
+      const entry = entriesById.get(id);
+      expect(entry, `${id} must exist in the pinned catalog`).toBeDefined();
+      expect(entry?.status, `${id} must be locked by the pinned authority`).toBe("locked");
+      expect(
+        Object.hasOwn(entry ?? {}, "review"),
+        `${id} must not retain candidate review state`,
+      ).toBeFalse();
+    }
+
+    const candidates = authorityCatalog.contracts
+      .filter((entry) => entry.status === "candidate")
+      .map((entry) => entry.id)
+      .sort();
+    expect(candidates).toEqual([...remainingCandidateIds]);
   });
 
   test("validates the authorized execution retention v2 authority data", async () => {
